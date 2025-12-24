@@ -3,57 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Tracker - Maximum Legibility</title>
+    <title>Staff Tracker - 30pt Labels</title>
     <style>
         :root { 
-            --primary: #2c3e50; --accent: #3498db; --bg: #f8f9fa; 
-            --leave: rgba(40, 40, 40, 0.9); 
-            --handover: rgba(255, 242, 0, 0.9); --border: #dee2e6;
+            --primary: #2c3e50; --accent: #2980b9; --bg: #f8f9fa; 
+            --border: #dee2e6;
         }
         
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
         /* ============================================================
-           ULTRA-LARGE PRINT SETTINGS
+           30PT FORCED PRINT ENGINE
            ============================================================ */
         @media print {
-            @page { size: landscape; margin: 0.2cm; }
+            @page { size: landscape; margin: 0.1cm; }
             header, .controls, .sidebar, #pasteOverlay, .btn-clear, .item-actions { display: none !important; }
             
             html, body { 
                 height: 100% !important; width: 100% !important; 
                 overflow: hidden !important; margin: 0 !important; 
-                padding: 0 !important; zoom: 0.8; 
+                padding: 0 !important; zoom: 0.75; 
             }
 
             .main-layout { display: block !important; height: 98vh !important; width: 100vw !important; }
             .work-area { height: 100% !important; display: flex !important; flex-direction: column !important; }
-            .print-header { display: block !important; font-size: 24pt; font-weight: 900; margin-bottom: 10px; flex-shrink: 0; }
+            .print-header { display: block !important; font-size: 26pt; font-weight: 900; margin-bottom: 5px; flex-shrink: 0; }
 
             .timeline-container { 
                 flex: 1 1 auto !important; height: 100% !important;
-                border: 3px solid #000; display: flex !important; 
+                border: 4px solid #000; display: flex !important; 
                 flex-direction: column !important; overflow: hidden !important;
             }
 
             .grid-wrapper { width: 100% !important; height: 100% !important; display: flex !important; flex-direction: column !important; }
             .chart-area { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; }
 
-            /* Make rows and bars significantly chunkier for the large text */
-            .shift-row { flex: 1 1 auto !important; min-height: 25px; border-bottom: 2px solid #bbb; }
-            .shift-bar { height: 96% !important; top: 2% !important; border: 2px solid #000 !important; }
+            /* Expanded row height for 30pt font */
+            .shift-row { flex: 1 1 auto !important; min-height: 45px; border-bottom: 2px solid #000; }
+            .shift-bar { height: 100% !important; top: 0 !important; border: 1px solid #000 !important; border-radius: 0 !important; }
 
-            /* EXTREME TEXT SIZE FOR PRINT */
+            /* 30PT FONT SETTINGS */
             .bar-text { 
-                font-size: 22pt !important; 
+                font-size: 30pt !important; 
                 font-weight: 900 !important; 
                 color: white !important;
-                /* Add a high-contrast stroke for maximum readability */
-                text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                letter-spacing: 1px;
+                text-transform: uppercase;
+                letter-spacing: -1px;
+                /* Heavy halo for contrast */
+                text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
             }
             
-            .hour-label, .cap-cell { font-size: 14pt !important; font-weight: bold !important; color: black !important; }
+            .hour-label, .cap-cell { font-size: 16pt !important; font-weight: 900 !important; color: black !important; padding: 10px 0 !important; }
+            .capacity-row { border-bottom: 4px solid #000 !important; }
 
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
@@ -80,13 +81,12 @@
         label { font-size: 9px; font-weight: bold; color: #495057; text-transform: uppercase; }
         input { padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px; }
         button { padding: 9px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; transition: background 0.2s; }
-        .btn-paste-primary { background: #e67e22; color: white; width: 100%; }
-        .btn-add { background: var(--accent); color: white; width: 100%; }
+        .btn-add { background: #3498db; color: white; width: 100%; }
         .btn-clear { background: #e74c3c; color: white; margin-top: 22px; }
         
-        .shift-row { position: relative; height: 42px; border-bottom: 1px solid #f1f3f5; width: 100%; }
+        .shift-row { position: relative; height: 50px; border-bottom: 1px solid #f1f3f5; width: 100%; }
         .shift-bar { 
-            position: absolute; height: 32px; top: 5px; 
+            position: absolute; height: 40px; top: 5px; 
             background: var(--accent); color: white; border-radius: 4px; 
             display: flex; align-items: center; justify-content: center;
             padding: 0 6px; box-sizing: border-box;
@@ -96,14 +96,9 @@
         
         .bar-text { 
             position: relative; z-index: 10; pointer-events: none; 
-            font-size: 13pt; font-weight: 800; white-space: nowrap;
+            font-size: 16pt; font-weight: 900; white-space: nowrap;
         }
         
-        .handover-overlay { position: absolute; height: 100%; top:0; background: var(--handover); z-index: 5; pointer-events: none; border-radius: 0; }
-        .leave-overlay { 
-            position: absolute; height: 100%; top: 0; background: var(--leave); z-index: 6; pointer-events: none; 
-            display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 900;
-        }
         .sidebar { flex: 1; background: white; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; max-width: 250px; flex-shrink: 0; }
         .shift-list { flex: 1; overflow-y: auto; padding: 10px; }
         .list-item { padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 11px; }
@@ -119,7 +114,7 @@
         <h3>Smart Paste Schedule</h3>
         <textarea id="bulkPasteInput" placeholder="Paste data..."></textarea>
         <div style="display:flex; gap: 10px;">
-            <button onclick="processPaste()" style="background: var(--accent); color: white; flex: 1;">Paste Schedule</button>
+            <button onclick="processPaste()" style="background: #3498db; color: white; flex: 1;">Paste Schedule</button>
             <button onclick="togglePaste(false)" style="background: #ccc; flex: 1;">Cancel</button>
         </div>
     </div>
@@ -156,7 +151,7 @@
             <div class="input-group"><label>Start (HHmm)</label><input type="text" id="startTime" maxlength="4" placeholder="0800" tabindex="5"></div>
             <div class="input-group"><label>Duration</label><input type="number" id="duration" step="0.5" value="8" tabindex="6"></div>
             <div class="input-group"><label>&nbsp;</label><button class="btn-add" id="addBtn" onclick="saveShift()" tabindex="7">Save Shift</button></div>
-            <div class="input-group"><label>&nbsp;</label><button onclick="togglePaste(true)" class="btn-paste-primary" tabindex="8">Paste Schedule</button></div>
+            <div class="input-group"><label>&nbsp;</label><button onclick="togglePaste(true)" style="background:#e67e22; color:white;" tabindex="8">Paste Schedule</button></div>
             <div class="input-group" style="grid-column: 6;"><button class="btn-clear" onclick="clearAllShifts()">Clear Area</button></div>
         </div>
         <div class="timeline-container">
@@ -236,8 +231,7 @@
         const inps = document.querySelectorAll('.init-input');
         const startRaw = document.getElementById('startTime').value;
         const duration = parseFloat(document.getElementById('duration').value);
-        let added = 0;
-        inps.forEach(i => { if (i.value.trim()) { shifts.push({ initials: i.value.trim().toUpperCase(), startRaw, duration, leave: [] }); added++; } });
+        inps.forEach(i => { if (i.value.trim()) { shifts.push({ initials: i.value.trim().toUpperCase(), startRaw, duration, leave: [] }); } });
         finishUpdate();
         inps.forEach(i => i.value = ''); 
         document.getElementById('startTime').value = ''; 
@@ -255,7 +249,6 @@
             let eOff = sOff + s.duration;
             const displayStart = Math.max(0, sOff);
             const displayEnd = Math.min(TOTAL_HOURS, eOff);
-            const displayDuration = displayEnd - displayStart;
 
             for(let h=0; h<TOTAL_HOURS; h++) {
                 if(Math.max(sOff, h) < Math.min(eOff, h+1)) {
@@ -268,7 +261,7 @@
             const bar = document.createElement('div');
             bar.className = 'shift-bar';
             bar.style.left = (displayStart / TOTAL_HOURS * 100) + '%';
-            bar.style.width = (displayDuration / TOTAL_HOURS * 100) + '%';
+            bar.style.width = (displayDuration = (displayEnd - displayStart) / TOTAL_HOURS * 100) + '%';
             bar.innerHTML = `<span class="bar-text">${s.initials}</span>`;
             
             row.appendChild(bar);
