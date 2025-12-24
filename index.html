@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Tracker - Reverted Version</title>
+    <title>Staff Tracker - Forced One Page</title>
     <style>
         :root { 
             --primary: #2c3e50; --accent: #3498db; --bg: #f8f9fa; 
@@ -13,16 +13,58 @@
         
         body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
+        /* --- FORCED ONE-PAGE LANDSCAPE PRINT STYLES --- */
         @media print {
-            header, .controls, .sidebar, #pasteOverlay { display: none !important; }
-            body { background-color: white; overflow: visible !important; height: auto; }
-            .main-layout { padding: 0; margin: 0; display: block; }
+            @page {
+                size: landscape;
+                margin: 0.5cm; /* Smaller margins to fit more */
+            }
+
+            /* Hide UI Elements */
+            header, .controls, .sidebar, #pasteOverlay, .btn-clear, .item-actions { display: none !important; }
+            
+            body { 
+                background-color: white; 
+                overflow: hidden !important; /* Prevents 2nd page spill */
+                height: 95vh; 
+                display: block; 
+            }
+
+            .main-layout { padding: 0; margin: 0; display: block; width: 100%; }
             .work-area { width: 100%; height: auto; }
-            .timeline-container { border: 1px solid #000; box-shadow: none; overflow: visible !important; }
-            .grid-wrapper { min-width: 100% !important; width: 100% !important; }
+
+            .print-header { 
+                display: block !important; 
+                font-size: 18pt; 
+                margin-bottom: 5px; 
+                border-bottom: 2px solid black;
+            }
+
+            .timeline-container { 
+                border: 1px solid #000; 
+                box-shadow: none; 
+                overflow: visible !important; 
+                width: 100% !important;
+                height: auto;
+            }
+
+            .grid-wrapper { 
+                min-width: 100% !important; /* Critical: allows grid to shrink */
+                width: 100% !important; 
+            }
+
+            .chart-area {
+                min-height: auto !important; /* Critical: prevents empty space spill */
+                background-size: calc(100% / 22) 100%;
+            }
+
+            .shift-row { height: 28px; } /* Slightly thinner rows for print */
+
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
+        /* SCREEN STYLES */
+        .print-header { display: none; }
         header { background: var(--primary); color: white; padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .area-select-container { display: flex; align-items: center; gap: 10px; }
         #areaSelector { padding: 6px 12px; border-radius: 4px; border: none; font-weight: bold; background: #ecf0f1; color: var(--primary); cursor: pointer; }
@@ -113,6 +155,8 @@
 
 <div class="main-layout">
     <div class="work-area">
+        <div id="printInfo" class="print-header"></div>
+
         <div class="controls">
             <input type="hidden" id="editIndex" value="-1">
             <div class="row-full">
@@ -128,29 +172,11 @@
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Start (HHmm)</label>
-                <input type="text" id="startTime" maxlength="4" placeholder="0800" tabindex="5">
-            </div>
-
-            <div class="input-group">
-                <label>Duration</label>
-                <input type="number" id="duration" step="0.5" value="8" tabindex="6">
-            </div>
-            
-            <div class="input-group">
-                <label>&nbsp;</label>
-                <button class="btn-add" id="addBtn" onclick="saveShift()" tabindex="7">Save Shift</button>
-            </div>
-
-            <div class="input-group">
-                <label>&nbsp;</label>
-                <button onclick="togglePaste(true)" class="btn-paste-primary" tabindex="8">Paste Schedule</button>
-            </div>
-
-            <div class="input-group" style="grid-column: 6;">
-                <button class="btn-clear" onclick="clearAllShifts()">Clear Area</button>
-            </div>
+            <div class="input-group"><label>Start (HHmm)</label><input type="text" id="startTime" maxlength="4" placeholder="0800" tabindex="5"></div>
+            <div class="input-group"><label>Duration</label><input type="number" id="duration" step="0.5" value="8" tabindex="6"></div>
+            <div class="input-group"><label>&nbsp;</label><button class="btn-add" id="addBtn" onclick="saveShift()" tabindex="7">Save Shift</button></div>
+            <div class="input-group"><label>&nbsp;</label><button onclick="togglePaste(true)" class="btn-paste-primary" tabindex="8">Paste Schedule</button></div>
+            <div class="input-group" style="grid-column: 6;"><button class="btn-clear" onclick="clearAllShifts()">Clear Area</button></div>
         </div>
 
         <div class="timeline-container">
@@ -231,7 +257,10 @@
     function loadDateData() {
         const key = getStorageKey();
         const area = document.getElementById('areaSelector').value;
+        const dateVal = document.getElementById('targetDate').value;
         document.getElementById('sidebarHeader').innerText = `Registry: ${area}`;
+        const displayDate = dateVal ? new Date(dateVal).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : "No Date Selected";
+        document.getElementById('printInfo').innerText = `${area} - ${displayDate}`;
         shifts = JSON.parse(localStorage.getItem(key)) || [];
         render();
     }
