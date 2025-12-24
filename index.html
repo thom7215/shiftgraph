@@ -3,48 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Tracker - Large Labels</title>
+    <title>Staff Tracker - Maximum Legibility</title>
     <style>
         :root { 
             --primary: #2c3e50; --accent: #3498db; --bg: #f8f9fa; 
-            --leave: rgba(60, 60, 60, 0.9); 
-            --handover: rgba(255, 242, 0, 0.8); --border: #dee2e6;
+            --leave: rgba(40, 40, 40, 0.9); 
+            --handover: rgba(255, 242, 0, 0.9); --border: #dee2e6;
         }
         
-        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
         /* ============================================================
-           STRICT ONE-PAGE PRINT ENGINE WITH LARGE LABELS
+           ULTRA-LARGE PRINT SETTINGS
            ============================================================ */
         @media print {
-            @page { size: landscape; margin: 0.3cm; }
+            @page { size: landscape; margin: 0.2cm; }
             header, .controls, .sidebar, #pasteOverlay, .btn-clear, .item-actions { display: none !important; }
             
             html, body { 
                 height: 100% !important; width: 100% !important; 
                 overflow: hidden !important; margin: 0 !important; 
-                padding: 0 !important; zoom: 0.82; 
+                padding: 0 !important; zoom: 0.8; 
             }
 
             .main-layout { display: block !important; height: 98vh !important; width: 100vw !important; }
             .work-area { height: 100% !important; display: flex !important; flex-direction: column !important; }
-            .print-header { display: block !important; font-size: 20pt; margin: 0 0 10px 0; flex-shrink: 0; }
+            .print-header { display: block !important; font-size: 24pt; font-weight: 900; margin-bottom: 10px; flex-shrink: 0; }
 
             .timeline-container { 
                 flex: 1 1 auto !important; height: 100% !important;
-                border: 2px solid #000; display: flex !important; 
+                border: 3px solid #000; display: flex !important; 
                 flex-direction: column !important; overflow: hidden !important;
             }
 
             .grid-wrapper { width: 100% !important; height: 100% !important; display: flex !important; flex-direction: column !important; }
             .chart-area { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; }
 
-            .shift-row { flex: 1 1 auto !important; min-height: 18px; border-bottom: 1px solid #ccc; }
-            .shift-bar { height: 92% !important; top: 4% !important; border: 1px solid #2980b9; }
+            /* Make rows and bars significantly chunkier for the large text */
+            .shift-row { flex: 1 1 auto !important; min-height: 25px; border-bottom: 2px solid #bbb; }
+            .shift-bar { height: 96% !important; top: 2% !important; border: 2px solid #000 !important; }
 
-            /* LARGER TEXT FOR PRINT */
-            .bar-text { font-size: 14pt !important; font-weight: 900 !important; text-shadow: 1px 1px 0px rgba(0,0,0,0.2); }
+            /* EXTREME TEXT SIZE FOR PRINT */
+            .bar-text { 
+                font-size: 22pt !important; 
+                font-weight: 900 !important; 
+                color: white !important;
+                /* Add a high-contrast stroke for maximum readability */
+                text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+                letter-spacing: 1px;
+            }
             
+            .hour-label, .cap-cell { font-size: 14pt !important; font-weight: bold !important; color: black !important; }
+
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
@@ -74,31 +84,29 @@
         .btn-add { background: var(--accent); color: white; width: 100%; }
         .btn-clear { background: #e74c3c; color: white; margin-top: 22px; }
         
-        .shift-row { position: relative; height: 38px; border-bottom: 1px solid #f1f3f5; width: 100%; }
+        .shift-row { position: relative; height: 42px; border-bottom: 1px solid #f1f3f5; width: 100%; }
         .shift-bar { 
-            position: absolute; height: 28px; top: 5px; 
+            position: absolute; height: 32px; top: 5px; 
             background: var(--accent); color: white; border-radius: 4px; 
             display: flex; align-items: center; justify-content: center;
-            padding: 0 4px; box-sizing: border-box;
+            padding: 0 6px; box-sizing: border-box;
             box-shadow: 1px 1px 3px rgba(0,0,0,0.1); text-align: center; overflow: hidden;
             z-index: 1;
         }
         
-        /* LABEL TEXT STYLE */
         .bar-text { 
             position: relative; z-index: 10; pointer-events: none; 
-            font-size: 11pt; font-weight: bold; white-space: nowrap;
+            font-size: 13pt; font-weight: 800; white-space: nowrap;
         }
         
         .handover-overlay { position: absolute; height: 100%; top:0; background: var(--handover); z-index: 5; pointer-events: none; border-radius: 0; }
         .leave-overlay { 
             position: absolute; height: 100%; top: 0; background: var(--leave); z-index: 6; pointer-events: none; 
-            display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 900;
         }
         .sidebar { flex: 1; background: white; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; max-width: 250px; flex-shrink: 0; }
         .shift-list { flex: 1; overflow-y: auto; padding: 10px; }
         .list-item { padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 11px; }
-        .item-actions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
         #pasteOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; justify-content: center; align-items: center; }
         .paste-modal { background: white; padding: 20px; border-radius: 12px; width: 500px; display: flex; flex-direction: column; gap: 10px; }
         textarea { width: 100%; height: 200px; font-family: monospace; font-size: 12px; resize: none; }
@@ -228,15 +236,11 @@
         const inps = document.querySelectorAll('.init-input');
         const startRaw = document.getElementById('startTime').value;
         const duration = parseFloat(document.getElementById('duration').value);
-        const editIdx = parseInt(document.getElementById('editIndex').value);
         let added = 0;
         inps.forEach(i => { if (i.value.trim()) { shifts.push({ initials: i.value.trim().toUpperCase(), startRaw, duration, leave: [] }); added++; } });
-        if (editIdx > -1 && added > 0) shifts.splice(editIdx, 1);
         finishUpdate();
         inps.forEach(i => i.value = ''); 
         document.getElementById('startTime').value = ''; 
-        document.getElementById('editIndex').value = "-1";
-        document.getElementById('addBtn').innerText = "Save Shift";
         inps[0].focus();
     }
 
@@ -255,11 +259,7 @@
 
             for(let h=0; h<TOTAL_HOURS; h++) {
                 if(Math.max(sOff, h) < Math.min(eOff, h+1)) {
-                    let isLeave = false;
-                    (s.leave || []).forEach(lv => {
-                        if (Math.max(parseTimeInput(lv.startRaw), h) < Math.min(parseTimeInput(lv.endRaw), h+1)) isLeave = true;
-                    });
-                    if (h < eOff - 1 && !isLeave) { counts[h]++; }
+                    if (h < eOff - 1) { counts[h]++; }
                 }
             }
 
@@ -269,7 +269,7 @@
             bar.className = 'shift-bar';
             bar.style.left = (displayStart / TOTAL_HOURS * 100) + '%';
             bar.style.width = (displayDuration / TOTAL_HOURS * 100) + '%';
-            bar.innerHTML = `<span class="bar-text">${s.initials} (${s.startRaw}-${formatTimeFromOffset(eOff)})</span>`;
+            bar.innerHTML = `<span class="bar-text">${s.initials}</span>`;
             
             row.appendChild(bar);
             chart.appendChild(row);
@@ -278,7 +278,12 @@
         counts.forEach((c, i) => document.getElementById(`cap-${i}`).innerText = c || '-');
     }
 
-    function finishUpdate() { shifts.sort((a,b) => parseTimeInput(a.startRaw) - parseTimeInput(b.startRaw)); localStorage.setItem(getStorageKey(), JSON.stringify(shifts)); render(); }
+    function finishUpdate() { 
+        shifts.sort((a,b) => parseTimeInput(a.startRaw) - parseTimeInput(b.startRaw)); 
+        localStorage.setItem(getStorageKey(), JSON.stringify(shifts)); 
+        render(); 
+    }
+
     function clearAllShifts() { if(confirm(`Clear area?`)) { shifts = []; finishUpdate(); } }
 
     document.getElementById('targetDate').valueAsDate = new Date();
