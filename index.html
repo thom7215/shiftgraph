@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Tracker - Forced One Page</title>
+    <title>Staff Tracker - One Page Fit</title>
     <style>
         :root { 
             --primary: #2c3e50; --accent: #3498db; --bg: #f8f9fa; 
@@ -13,53 +13,86 @@
         
         body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        /* --- FORCED ONE-PAGE LANDSCAPE PRINT STYLES --- */
+        /* ============================================================
+           STRICT ONE-PAGE LANDSCAPE PRINT SETTINGS
+           ============================================================ */
         @media print {
             @page {
                 size: landscape;
-                margin: 0.5cm; /* Smaller margins to fit more */
+                margin: 5mm; /* Minimal margins */
             }
 
-            /* Hide UI Elements */
+            /* Hide non-essential UI */
             header, .controls, .sidebar, #pasteOverlay, .btn-clear, .item-actions { display: none !important; }
             
-            body { 
-                background-color: white; 
-                overflow: hidden !important; /* Prevents 2nd page spill */
-                height: 95vh; 
-                display: block; 
+            body, html { 
+                height: 100%; 
+                width: 100%; 
+                overflow: hidden !important; 
+                background: white; 
             }
 
-            .main-layout { padding: 0; margin: 0; display: block; width: 100%; }
-            .work-area { width: 100%; height: auto; }
+            .main-layout { 
+                display: block; 
+                height: 100%; 
+                width: 100%; 
+                padding: 0; 
+                margin: 0; 
+            }
+
+            .work-area { 
+                height: 100%; 
+                width: 100%; 
+                display: flex; 
+                flex-direction: column; 
+            }
 
             .print-header { 
                 display: block !important; 
                 font-size: 18pt; 
                 margin-bottom: 5px; 
                 border-bottom: 2px solid black;
+                flex-shrink: 0;
             }
 
             .timeline-container { 
+                flex-grow: 1; /* Makes container take up remaining page height */
                 border: 1px solid #000; 
-                box-shadow: none; 
-                overflow: visible !important; 
-                width: 100% !important;
+                display: flex; 
+                flex-direction: column;
+                overflow: hidden !important;
                 height: auto;
             }
 
+            .scrollable-timeline { overflow: hidden !important; height: 100%; }
+
             .grid-wrapper { 
-                min-width: 100% !important; /* Critical: allows grid to shrink */
+                min-width: 100% !important; 
                 width: 100% !important; 
+                height: 100%;
+                display: flex;
+                flex-direction: column;
             }
 
             .chart-area {
-                min-height: auto !important; /* Critical: prevents empty space spill */
+                flex-grow: 1;
+                min-height: 0 !important;
                 background-size: calc(100% / 22) 100%;
+                display: flex;
+                flex-direction: column; /* Stacks rows vertically */
             }
 
-            .shift-row { height: 28px; } /* Slightly thinner rows for print */
+            .shift-row { 
+                flex: 1; /* Each row takes equal fraction of remaining height */
+                min-height: 15px; /* Prevent rows from disappearing if there are dozens */
+                height: auto !important; 
+                border-bottom: 1px solid #eee;
+            }
 
+            .shift-bar { height: 80% !important; top: 10% !important; }
+
+            .labels, .capacity-row { flex-shrink: 0; }
+            
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
